@@ -8,7 +8,7 @@ public class Factura {
     private double total;
 
     // Constructor
-    public Factura (int id_factura, Date fecha, Cliente cliente, String tipoVenta, double total) {
+    public Factura(int id_factura, Date fecha, Cliente cliente, String tipoVenta, double total) {
         this.id_factura = id_factura;
         this.fecha = fecha;
         this.cliente = cliente;
@@ -29,4 +29,9 @@ public class Factura {
     public int getIdFactura() {
         return id_factura;
     }
+    public String getTipoVenta() {  return tipoVenta;  }
+    public double getTotal() {  return total;  }
+    public Cliente getCliente() {  return cliente;  }
+    public Date getFecha() {  return fecha;  }
+
 }

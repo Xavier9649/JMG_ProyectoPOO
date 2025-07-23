@@ -37,5 +37,7 @@ public class Cliente {
     public int getCedulaCliente() {
         return cedulaCliente;
     }
+    public int getTelefono() { return telefono; }
+    public String getCorreo() { return correo; }
 }
 

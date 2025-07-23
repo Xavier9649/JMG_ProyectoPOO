@@ -28,12 +28,19 @@ public class Producto {
     }
 
     //Getters
-    public int getIdProducto() {
+    public int getid_producto() {
         return id_producto;
     }
     public String getNombre() {
         return nombre;
     }
+    public String getCategoria() {
+        return categoria;
+    }
+    public double getPrecio() {
+        return precio;
+    }
+    public int getCantidad() {  return cantidad;  }
 
     //Setters
     public void setNombre(String nombre) {

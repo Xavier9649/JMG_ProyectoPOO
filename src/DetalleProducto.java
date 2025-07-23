@@ -20,4 +20,15 @@ public class DetalleProducto {
                            ", Subtotal por producto: $" + subtotalProducto);
         return cantidad * subtotalProducto;
     }
+    //Getters
+    public int getid_factura() {
+        return id_factura;
+    }
+    public int getid_producto() {
+        return id_producto;
+    }
+    public int getcantidad() {
+        return cantidad;
+    }
+
 }
