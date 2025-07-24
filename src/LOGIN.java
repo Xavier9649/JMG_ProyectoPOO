@@ -1,8 +1,8 @@
 import javax.swing.*;
 
 public class LOGIN {
-    private JTextField textField2;
-    private JPasswordField passwordField1;
+    private JTextField txtusuario;
+    private JPasswordField txtpassword;
     private JComboBox comboBox1;
     private JButton INGRESARButton;
 }
