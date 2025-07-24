@@ -1,7 +1,7 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
+//Esta clase es parte de un sistema de gestión de ventas, donde se pueden insertar detalles de productos en una factura.
 public class DetalleProductoDAO {
 
     public void insertarDetalle(DetalleProducto detalle) {
