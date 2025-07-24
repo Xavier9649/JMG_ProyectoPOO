@@ -3,7 +3,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-//Esta clase es parte de un sistema de gestión de facturas, donde se pueden insertar y consultar facturas en una base de datos.
 public class FacturaDAO {
 
     // Insertar factura en la base de datos

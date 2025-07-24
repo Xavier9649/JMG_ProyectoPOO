@@ -3,7 +3,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-//Esta clase es parte de un sistema de gestión de productos, donde se pueden insertar, actualizar y consultar productos en una base de datos.
 public class ProductoDAO {
 
     // Insertar un nuevo producto

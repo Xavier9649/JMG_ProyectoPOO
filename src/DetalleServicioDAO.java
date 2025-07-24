@@ -2,7 +2,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-// Esta clase es parte de un sistema de gestión de servicios, donde se pueden insertar detalles de servicios en una factura.
 public class DetalleServicioDAO {
 
     // Insertar detalle de servicio

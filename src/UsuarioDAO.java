@@ -3,7 +3,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-//Esta clase es parte de un sistema de gestión de usuarios, donde se pueden validar credenciales y registrar nuevos usuarios.
 public class UsuarioDAO {
 
     // Validar credenciales y obtener rol
