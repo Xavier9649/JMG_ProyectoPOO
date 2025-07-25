@@ -22,6 +22,4 @@ public class Mascota {
     public String getInfo() {
         return "ID Mascota: " + id_mascota + ", Nombre: " + nombre + "Especie:"+ especie +", Raza: " + raza + ", Edad: " + edad + "id cliente"+id_cliente;
     }
-
-
 }

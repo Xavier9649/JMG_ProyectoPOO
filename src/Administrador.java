@@ -68,6 +68,7 @@ public class Administrador extends JFrame {
 
         try (Connection conn = clever_cloud.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, nombre);
             stmt.setString(2, pass);
             stmt.setString(3, rol);
