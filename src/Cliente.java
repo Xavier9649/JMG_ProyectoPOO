@@ -2,6 +2,7 @@ public class Cliente {
     private int id_cliente;
     private String nombre;
     private String apellido;
+    private int cedulaCliente;
     private int telefono;
     private String correo;
 
@@ -10,6 +11,7 @@ public class Cliente {
         this.id_cliente = id_cliente;
         this.nombre = nombre;
         this.apellido = apellido;
+        this.cedulaCliente = cedulaCliente;
         this.telefono = telefono;
         this.correo = correo;
     }
@@ -18,6 +20,7 @@ public class Cliente {
     //Registrar Cliente
     public void registrarCliente() {
         System.out.println("Cliente Registrado: " + nombre + " " + apellido);
+        System.out.println("Cédula: " + cedulaCliente);
         System.out.println("Teléfono: " + telefono);
         System.out.println("Correo: " + correo);
     }
@@ -31,7 +34,9 @@ public class Cliente {
     public String getApellido() {
         return apellido;
     }
-
+    public int getCedulaCliente() {
+        return cedulaCliente;
+    }
     public int getTelefono() { return telefono; }
     public String getCorreo() { return correo; }
 }

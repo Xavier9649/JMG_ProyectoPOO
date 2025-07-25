@@ -1,15 +1,18 @@
 public class DetalleServicio {
+    private int id_detalle;
     private int id_factura;
     private int id_servicio;
     private int cantidad;
-    private double subtotalServicio;
+    private double preciounitario;
+
 
     //Constructor
-    public DetalleServicio(int id_factura, int id_servicio, int cantidad, double subtotalServicio) {
+    public DetalleServicio(int id_detalle,int id_factura, int id_servicio, int cantidad, double preciounitario) {
+        this.id_detalle= id_detalle;
         this.id_factura = id_factura;
         this.id_servicio = id_servicio;
         this.cantidad = cantidad;
-        this.subtotalServicio = subtotalServicio;
+        this.preciounitario = preciounitario;
     }
 
     //Metodos
@@ -17,8 +20,8 @@ public class DetalleServicio {
     public double calcularSubtotal() {
         System.out.println("ID del producto: " + id_servicio +
                 ", Cantidad: " + cantidad +
-                ", Subtotal por producto: $" + subtotalServicio);
-        return cantidad * subtotalServicio;
+                ", Precio por producto: $" + preciounitario);
+        return cantidad * preciounitario;
     }
     //Getters
     public int getid_factura() {
