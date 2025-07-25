@@ -22,6 +22,12 @@ public class Administrador extends JFrame {
     private JTextField txtnombremascota;
     private JButton buscarMascotaButton;
     private JTable tablemascota;
+    private JPanel addproductopanel;
+    private JTextField textnewproducto;
+    private JTextField textnewcategoria;
+    private JTextField txtprecionew;
+    private JTextField txtcantidadnew;
+    private JButton addProductoButton;
 
     private DefaultTableModel modeloProducto;
     private DefaultTableModel modeloCliente;
@@ -50,6 +56,7 @@ public class Administrador extends JFrame {
         buscarProductoButton.addActionListener(e -> buscarProducto());
         buscarClienteButton.addActionListener(e -> buscarCliente());
         buscarMascotaButton.addActionListener(e -> buscarMascota());
+        addProductoButton.addActionListener(e -> registrarNuevoProducto());
     }
 
     private void registrarUsuario() {
@@ -142,6 +149,49 @@ public class Administrador extends JFrame {
             }
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, " Error al buscar mascota: " + ex.getMessage());
+        }
+    }
+    private void registrarNuevoProducto() {
+        String nombre = textnewproducto.getText();
+        String categoria = textnewcategoria.getText();
+        String precioStr = txtprecionew.getText();
+        String cantidadStr = txtcantidadnew.getText();
+
+        // Validar valores básicos
+        if (nombre.isEmpty() || categoria.isEmpty() || precioStr.isEmpty() || cantidadStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Completa todos los campos.");
+            return;
+        }
+
+        try {
+            double precio = Double.parseDouble(precioStr);
+            int cantidad = Integer.parseInt(cantidadStr);
+
+            String sql = "INSERT INTO producto (nombre, categoria, precio, cantidad) VALUES (?, ?, ?, ?)";
+
+            try (Connection conn = clever_cloud.conectar();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                stmt.setString(1, nombre);
+                stmt.setString(2, categoria);
+                stmt.setDouble(3, precio);
+                stmt.setInt(4, cantidad);
+
+                stmt.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Producto añadido correctamente.");
+
+                // Limpiar campos
+                textnewproducto.setText("");
+                textnewcategoria.setText("");
+                txtprecionew.setText("");
+                txtcantidadnew.setText("");
+
+            }
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Precio o cantidad inválidos.");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al guardar producto: " + ex.getMessage());
         }
     }
 
