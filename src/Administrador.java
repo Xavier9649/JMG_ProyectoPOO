@@ -70,16 +70,15 @@ public class Administrador extends JFrame {
         buscarMascotaButton.addActionListener(e -> buscarMascota());
         addProductoButton.addActionListener(e -> registrarNuevoProducto());
 
-        // --- NUEVOS LISTENERS ---
+
         borrarProductoButton.addActionListener(e -> borrarProducto());
         actualizarProductoButton.addActionListener(e -> actualizarProducto());
 
-        // NOTA: Asegúrate de tener un botón llamado "buscarProductoParaActualizarButton" en tu GUI
-        // en la pestaña de actualizar para que la lógica de búsqueda funcione.
+
         buscarProductoParaActualizarButton.addActionListener(e -> buscarProductoParaActualizar());
     }
 
-    // --- NUEVO MÉTODO: BORRAR PRODUCTO ---
+    // metodos
     private void borrarProducto() {
         int selectedRow = tableproducto.getSelectedRow();
 
@@ -113,7 +112,7 @@ public class Administrador extends JFrame {
         }
     }
 
-    // --- NUEVO MÉTODO: BUSCAR PRODUCTO PARA ACTUALIZAR ---
+
     private void buscarProductoParaActualizar() {
         String idStr = textidproductoactualizar.getText();
         if (idStr.isEmpty()) {
@@ -154,7 +153,7 @@ public class Administrador extends JFrame {
         }
     }
 
-    // --- NUEVO MÉTODO: ACTUALIZAR PRODUCTO ---
+
     private void actualizarProducto() {
         String idStr = textidproductoactualizar.getText();
         String nombre = textnombreactualizado.getText();
@@ -203,7 +202,7 @@ public class Administrador extends JFrame {
         }
     }
 
-    // --- MÉTODOS ORIGINALES (sin cambios) ---
+
 
     private void registrarUsuario() {
         String nombre = txtusuario.getText();
