@@ -371,9 +371,11 @@ public class Cajero extends JFrame {
             JOptionPane.showMessageDialog(this, "Error al buscar producto: " + ex.getMessage());
         }
     }
+
     //Metodo para generar la factura al hacer clic en el botón "Generar Factura"
     private void generarFactura() {
-        String fecha = textfecha.getText().trim(); //Obtener la fecha del campo de texto fecha
+        String fecha = textfecha.getText().trim();
+
         if (fecha.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Ingresa una fecha.");
             return;
@@ -382,38 +384,62 @@ public class Cajero extends JFrame {
         DefaultTableModel modeloCliente = (DefaultTableModel) clienteingresadofactura.getModel();
         DefaultTableModel modeloItems = (DefaultTableModel) productservicioingresadofactura.getModel();
 
-        //Establecemos que debe haber al menos un cliente y un producto/servicio para generar la factura
         if (modeloCliente.getRowCount() == 0 || modeloItems.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Debe haber un cliente y al menos un producto/servicio.");
             return;
         }
 
-
-        StringBuilder factura = new StringBuilder();
-        factura.append("Fecha: ").append(fecha).append("\n\n");
-
-        factura.append("Cliente:\n");
-        factura.append("ID: ").append(modeloCliente.getValueAt(0, 0)).append("\n");
-        factura.append("Nombre: ").append(modeloCliente.getValueAt(0, 1)).append(" ").append(modeloCliente.getValueAt(0, 2)).append("\n");
-        factura.append("Correo: ").append(modeloCliente.getValueAt(0, 3)).append("\n");
-        factura.append("Dirección: ").append(modeloCliente.getValueAt(0, 4)).append("\n\n");
-
-        factura.append("Detalle:\n");
+        int idCliente = (int) modeloCliente.getValueAt(0, 0);
         double total = 0.0;
+
+        StringBuilder tipoVenta = new StringBuilder(); // Aquí se guardarán los nombres de productos
+
         for (int i = 0; i < modeloItems.getRowCount(); i++) {
-            String prod = (String) modeloItems.getValueAt(i, 0);
+            String nombre = (String) modeloItems.getValueAt(i, 0);
             double precio = (double) modeloItems.getValueAt(i, 1);
             int cantidad = (int) modeloItems.getValueAt(i, 2);
             double subtotal = (double) modeloItems.getValueAt(i, 3);
 
-            factura.append("- ").append(prod).append(" | $").append(precio).append(" x ").append(cantidad).append(" = $").append(subtotal).append("\n");
             total += subtotal;
+            tipoVenta.append(nombre)
+                    .append(" x").append(cantidad)
+                    .append(" ($").append(precio).append("), ");
         }
 
-        factura.append("\nTotal: $").append(String.format("%.2f", total));
+        // Quitamos la última coma y espacio
+        if (tipoVenta.length() > 2) {
+            tipoVenta.setLength(tipoVenta.length() - 2);
+        }
 
-        JOptionPane.showMessageDialog(this, factura.toString(), "Factura generada", JOptionPane.INFORMATION_MESSAGE);
+        try (Connection conn = clever_cloud.conectar()) {
+            String sql = "INSERT INTO factura (fecha, tipo_venta, total, id_cliente) VALUES (?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setDate(1, java.sql.Date.valueOf(fecha));
+            stmt.setString(2, tipoVenta.toString());
+            stmt.setDouble(3, total);
+            stmt.setInt(4, idCliente);
+
+            stmt.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Factura registrada con éxito en la base de datos.");
+
+            // Mostrar la factura al usuario
+            StringBuilder resumen = new StringBuilder();
+            resumen.append("Fecha: ").append(fecha).append("\n\n");
+            resumen.append("Cliente: ").append(modeloCliente.getValueAt(0, 1)).append(" ").append(modeloCliente.getValueAt(0, 2)).append("\n");
+            resumen.append("Detalle: \n").append(tipoVenta.toString()).append("\n");
+            resumen.append("Total: $").append(String.format("%.2f", total));
+
+            JOptionPane.showMessageDialog(this, resumen.toString(), "Factura generada", JOptionPane.INFORMATION_MESSAGE);
+            limpiarCamposFactura();
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al registrar la factura: " + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
+
+
     // Limpiar campos de entrada en factura
     private void limpiarCamposFactura() {
         // Limpiar campos de texto
