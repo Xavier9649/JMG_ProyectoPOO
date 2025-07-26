@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="JMG_ProyectoPOO:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JMG_ProyectoPOO_jar</output-path>
+    <root id="archive" name="JMG_ProyectoPOO.jar">
+      <element id="module-output" name="JMG_ProyectoPOO" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
