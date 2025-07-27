@@ -1,6 +1,8 @@
-// LOGIN.java
 import javax.swing.*;
-import java.awt.event.*;
+
+import java.sql.Connection;
+
+
 
 public class LOGIN extends JFrame {
     private JTextField txtusuario;
@@ -37,24 +39,21 @@ public class LOGIN extends JFrame {
     }
 
     private void iniciarSesion() {
-        String usuario = txtusuario.getText().trim();
-        String contraseña = new String(txtpassword.getPassword());
-        String rolSeleccionado = (String) comboBox1rol.getSelectedItem();
-
-        if (Usuario.validarCredenciales(usuario, contraseña, rolSeleccionado)) {
-            JOptionPane.showMessageDialog(this, "Bienvenido " + rolSeleccionado + ".");
-            if (rolSeleccionado.equals("Administrador")) {
-                new Administrador();
-            } else {
-                new Cajero();
-            }
-            dispose();
+        String usuario = txtusuario.getText();
+        String password = new String(txtpassword.getPassword());
+        String rol = comboBox1rol.getSelectedItem().toString();
+        if (Usuario.validarCredenciales(usuario, password, rol)) {
+            JOptionPane.showMessageDialog(this, "Bienvenido " + rol);
+            if (rol.equals("Administrador")) new Administrador();
+            else new Cajero();
+            dispose();//dispose cierra la ventana de login
         } else {
-            JOptionPane.showMessageDialog(this, "Credenciales incorrectas o rol no coincide.");
+            JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(LOGIN::new);
+        SwingUtilities.invokeLater(() -> new LOGIN());
     }
+
 }

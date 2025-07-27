@@ -1,7 +1,6 @@
-// Clase Cajero.java (interfaz gráfica mejorada y corregida)
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cajero extends JFrame {
@@ -28,6 +27,10 @@ public class Cajero extends JFrame {
     private JTable clienteingresadofactura, productservicioingresadofactura;
     private JSpinner cantidadfactura;
 
+    private DefaultTableModel modeloClienteFactura;
+    private DefaultTableModel modeloDetalleFactura;
+
+
     public Cajero() {
         setContentPane(tabbedPane1);
         setTitle("Panel Cajero");
@@ -45,170 +48,161 @@ public class Cajero extends JFrame {
 
         clienteingresadofactura.setModel(new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Correo", "Dirección"}, 0));
         productservicioingresadofactura.setModel(new DefaultTableModel(new Object[]{"Producto", "Precio Unitario", "Cantidad", "Subtotal"}, 0));
+
+        modeloClienteFactura = new DefaultTableModel(new Object[]{"ID", "Nombre", "Apellido", "Correo", "Dirección"}, 0);
+        clienteingresadofactura.setModel(modeloClienteFactura);
+
+        modeloDetalleFactura = new DefaultTableModel(new Object[]{"Producto", "Precio Unitario", "Cantidad", "Subtotal"}, 0);
+        productservicioingresadofactura.setModel(modeloDetalleFactura);
     }
 
     private void inicializarListeners() {
         registrarButton.addActionListener(e -> registrarCliente());
         botonbuscarcliente.addActionListener(e -> buscarCliente());
-        buscarProductoServicioButton.addActionListener(e -> buscarProductoServicio());
         buscarMascotaButton.addActionListener(e -> buscarMascota());
         registrarMascotaButton.addActionListener(e -> registrarMascota());
         ingresarClienteButton.addActionListener(e -> buscarClienteFactura());
         agregarSubtotalButton.addActionListener(e -> agregarProductoAFactura());
         generarFacturaButton.addActionListener(e -> generarFactura());
         limpiarCamposButton.addActionListener(e -> limpiarCamposFactura());
+        buscarProductoServicioButton.addActionListener(e -> buscarProductoServicio());
     }
 
     private void registrarCliente() {
-        try {
-            int id = Integer.parseInt(textnuevoidcliente.getText());
-            Cliente cliente = new Cliente(
-                    id,
-                    textnuevonombre.getText(),
-                    textnuevoapellido.getText(),
-                    textnuevotelefono.getText(),
-                    textnuevocorreo.getText(),
-                    textnuevadireccion.getText()
-            );
-            cliente.registrar();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "ID de cliente inválido.");
-        }
+        Cliente cliente = new Cliente(
+                Integer.parseInt(textnuevoidcliente.getText()),
+                textnuevonombre.getText(),
+                textnuevoapellido.getText(),
+                textnuevotelefono.getText(),
+                textnuevocorreo.getText(),
+                textnuevadireccion.getText()
+        );
+        if (cliente.registrar()) JOptionPane.showMessageDialog(this, "Cliente registrado");
     }
 
     private void buscarCliente() {
-        try {
-            int id = Integer.parseInt(textidcliente.getText());
-            Cliente cliente = Cliente.buscarPorID(id);
-            if (cliente != null) {
-                JOptionPane.showMessageDialog(this, "Cliente encontrado: " + cliente.getNombre());
-            } else {
-                JOptionPane.showMessageDialog(this, "Cliente no encontrado.");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "ID inválido.");
-        }
+        Cliente cliente = Cliente.buscarPorID(Integer.parseInt(textidcliente.getText()));
+        JOptionPane.showMessageDialog(this, cliente != null ? "Cliente encontrado: " + cliente.getNombre() : "Cliente no encontrado");
     }
 
     private void buscarProductoServicio() {
         try {
             int id = Integer.parseInt(textidproductoservicio.getText());
             Producto producto = Producto.buscarPorID(id);
-            modeloProductoServicio.setRowCount(0);
+            modeloProductoServicio.setRowCount(0); // limpia la tabla
             if (producto != null) {
-                modeloProductoServicio.addRow(new Object[]{producto.getId(), producto.getNombre(), producto.getCategoria(), producto.getPrecio(), producto.getCantidad()});
+                modeloProductoServicio.addRow(producto.toTableRow());
             } else {
                 JOptionPane.showMessageDialog(this, "Producto no encontrado.");
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "ID de producto inválido.");
+            JOptionPane.showMessageDialog(this, "Ingrese un ID válido.");
         }
     }
 
     private void buscarMascota() {
         List<Mascota> lista = Mascota.buscarPorNombre(textnombremascota.getText());
-        if (lista.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mascota no encontrada.");
-        } else {
-            StringBuilder resultado = new StringBuilder();
-            for (Mascota m : lista) {
-                resultado.append("Mascota: ").append(m.getNombre()).append(" ID Cliente: ").append(m.getIdCliente()).append("\n");
-            }
-            JOptionPane.showMessageDialog(this, resultado.toString());
+        StringBuilder resultado = new StringBuilder();
+        for (Mascota m : lista) {
+            resultado.append("Mascota: ").append(m.getNombre()).append(" - Cliente: ").append(m.getIdCliente()).append(" ");
         }
+        JOptionPane.showMessageDialog(this, resultado.length() > 0 ? resultado.toString() : "No se encontraron mascotas");
     }
 
     private void registrarMascota() {
-        try {
-            int edad = Integer.parseInt(textnuevaedad.getText());
-            int id_cliente = Integer.parseInt(textidclienteregistrado.getText());
-            Mascota mascota = new Mascota(
-                    textnuevonombremascota.getText(),
-                    textnuevaespecie.getText(),
-                    textnuevaraza.getText(),
-                    edad,
-                    id_cliente
-            );
-            mascota.registrar();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Edad o ID del cliente inválido.");
-        }
+        Mascota mascota = new Mascota(
+                textnuevonombremascota.getText(),
+                textnuevaespecie.getText(),
+                textnuevaraza.getText(),
+                Integer.parseInt(textnuevaedad.getText()),
+                Integer.parseInt(textidclienteregistrado.getText())
+        );
+        if (mascota.registrar()) JOptionPane.showMessageDialog(this, "Mascota registrada");
     }
 
     private void buscarClienteFactura() {
-        try {
-            int id = Integer.parseInt(textidclientefactura.getText());
-            Cliente cliente = Cliente.buscarPorID(id);
-            DefaultTableModel modelo = (DefaultTableModel) clienteingresadofactura.getModel();
-            modelo.setRowCount(0);
-            if (cliente != null) {
-                modelo.addRow(new Object[]{cliente.getIdCliente(), cliente.getNombre(), cliente.getApellido(), cliente.getCorreo(), cliente.getDireccion()});
-            } else {
-                JOptionPane.showMessageDialog(this, "Cliente no encontrado para factura.");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "ID inválido.");
-        }
+        Cliente cliente = Cliente.buscarPorID(Integer.parseInt(textidclientefactura.getText()));
+        modeloClienteFactura.setRowCount(0);
+        if (cliente != null) modeloClienteFactura.addRow(cliente.toTableRow());
     }
 
     private void agregarProductoAFactura() {
-        String nombreProducto = textproductoserviciofactura.getText();
-        int cantidad = (int) cantidadfactura.getValue();
-        Producto producto = Producto.buscarPorNombre(nombreProducto);
+        String nombre = textproductoserviciofactura.getText().trim();
+        if (nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor, ingresa el nombre del producto o servicio.");
+            return;
+        }
 
-        if (producto != null) {
-            double subtotal = producto.getPrecio() * cantidad;
-            DefaultTableModel modelo = (DefaultTableModel) productservicioingresadofactura.getModel();
-            modelo.addRow(new Object[]{producto.getNombre(), producto.getPrecio(), cantidad, subtotal});
+        int cantidad = (int) cantidadfactura.getValue();
+        Producto p = Producto.buscarPorNombre(nombre);
+        if (p != null) {
+            double subtotal = p.getPrecio() * cantidad;
+            modeloDetalleFactura.addRow(new Object[]{p.getNombre(), p.getPrecio(), cantidad, subtotal});
         } else {
-            JOptionPane.showMessageDialog(this, "Producto no encontrado para factura.");
+            JOptionPane.showMessageDialog(this, "Producto no encontrado: " + nombre);
         }
     }
 
     private void generarFactura() {
-        DefaultTableModel modeloCliente = (DefaultTableModel) clienteingresadofactura.getModel();
-        DefaultTableModel modeloItems = (DefaultTableModel) productservicioingresadofactura.getModel();
-
-        if (modeloCliente.getRowCount() == 0 || modeloItems.getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "Faltan datos para generar factura.");
+        if (modeloClienteFactura.getRowCount() == 0 || modeloDetalleFactura.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Debe ingresar cliente y al menos un producto");
             return;
         }
 
-        try {
-            int idCliente = (int) modeloCliente.getValueAt(0, 0);
-            Cliente cliente = Cliente.buscarPorID(idCliente);
-            String tipoVenta = "";
-            double total = 0;
+        int idCliente = (int) modeloClienteFactura.getValueAt(0, 0);
+        double total = 0;
+        List<DetalleServicio> detalles = new ArrayList<>();
+        StringBuilder resumen = new StringBuilder();
 
-            for (int i = 0; i < modeloItems.getRowCount(); i++) {
-                tipoVenta += modeloItems.getValueAt(i, 0) + ", ";
-                total += (double) modeloItems.getValueAt(i, 3);
+        resumen.append("Resumen de la factura:\n");
+        resumen.append("Cliente ID: ").append(idCliente).append("\n");
+        resumen.append("Cliente: ").append(modeloClienteFactura.getValueAt(0, 1)).append(" ")
+                .append(modeloClienteFactura.getValueAt(0, 2)).append("\n");
+        resumen.append("Fecha: ").append(textfecha.getText()).append("\n\n");
+        resumen.append("Productos:\n");
+
+        for (int i = 0; i < modeloDetalleFactura.getRowCount(); i++) {
+            String nombreProd = (String) modeloDetalleFactura.getValueAt(i, 0);
+            int cantidad = (int) modeloDetalleFactura.getValueAt(i, 2);
+            double precio = (double) modeloDetalleFactura.getValueAt(i, 1);
+            double subtotal = cantidad * precio;
+            Producto p = Producto.buscarPorNombre(nombreProd);
+            if (p != null) {
+                detalles.add(new DetalleServicio(null, p, cantidad, precio));
+                total += subtotal;
+                resumen.append("- ").append(nombreProd)
+                        .append(" x").append(cantidad)
+                        .append(" @ ").append(precio)
+                        .append(" = $").append(String.format("%.2f", subtotal)).append("\n");
             }
-            tipoVenta = tipoVenta.substring(0, tipoVenta.length() - 2);
+        }
 
-            Factura factura = new Factura(java.sql.Date.valueOf(textfecha.getText()), tipoVenta, total, cliente.getIdCliente());
-            factura.registrar();
+        resumen.append("\nTotal: $").append(String.format("%.2f", total));
 
-            JOptionPane.showMessageDialog(this, "Factura registrada correctamente.");
+        Factura factura = new Factura(java.sql.Date.valueOf(textfecha.getText()), "Venta", total, idCliente);
+        if (factura.registrarConDetalles(detalles)) {
+            JOptionPane.showMessageDialog(this, "Factura registrada correctamente.\n\n" + resumen.toString());
             limpiarCamposFactura();
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al generar factura: " + e.getMessage());
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al registrar factura");
         }
     }
+
+
 
     private void limpiarCamposFactura() {
         textfecha.setText("");
         textidclientefactura.setText("");
         textproductoserviciofactura.setText("");
         cantidadfactura.setValue(1);
-        ((DefaultTableModel) clienteingresadofactura.getModel()).setRowCount(0);
-        ((DefaultTableModel) productservicioingresadofactura.getModel()).setRowCount(0);
+        modeloClienteFactura.setRowCount(0);
+        modeloDetalleFactura.setRowCount(0);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Cajero::new);
+        SwingUtilities.invokeLater(() -> new Cajero());
     }
+
 }
 
 

@@ -1,9 +1,12 @@
-// Factura.java
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Date;
+import java.util.List;
 
-public class Factura {
-    private int id; // Se requiere para enlazar con detalle_servicio
+class Factura {
+    private int id;
     private Date fecha;
     private String tipoVenta;
     private double total;
@@ -16,7 +19,7 @@ public class Factura {
         this.idCliente = idCliente;
     }
 
-    public int getId() { return id; } // Agregado para enlazar detalles
+    public int getId() { return id; }
 
     public boolean registrar() {
         try (Connection conn = clever_cloud.conectar()) {
@@ -32,11 +35,20 @@ public class Factura {
             if (rs.next()) {
                 this.id = rs.getInt(1);
             }
-
             return true;
         } catch (Exception e) {
-            System.out.println("Error al registrar factura: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
+
+    public boolean registrarConDetalles(List<DetalleServicio> detalles) {
+        if (!this.registrar()) return false;
+        for (DetalleServicio d : detalles) {
+            d.setFactura(this);
+            if (!d.registrar()) return false;
+        }
+        return true;
+    }
 }
+

@@ -1,8 +1,10 @@
-// Mascota.java
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Mascota {
+class Mascota {
     private String nombre, especie, raza;
     private int edad, id_cliente;
 
@@ -13,9 +15,6 @@ public class Mascota {
         this.edad = edad;
         this.id_cliente = id_cliente;
     }
-
-    public String getNombre() { return nombre; }
-    public int getIdCliente() { return id_cliente; }
 
     public boolean registrar() {
         try (Connection conn = clever_cloud.conectar()) {
@@ -29,17 +28,16 @@ public class Mascota {
             stmt.executeUpdate();
             return true;
         } catch (Exception e) {
-            System.out.println("Error al registrar mascota: " + e.getMessage());
             return false;
         }
     }
 
-    public static List<Mascota> buscarPorNombre(String nombre) {
+    public static List<Mascota> buscarPorNombre(String nombreBuscado) {
         List<Mascota> lista = new ArrayList<>();
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "SELECT * FROM mascota WHERE nombre = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, nombre);
+            stmt.setString(1, nombreBuscado);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 lista.add(new Mascota(
@@ -51,9 +49,15 @@ public class Mascota {
                 ));
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar mascota: " + e.getMessage());
+            return lista;
         }
         return lista;
     }
-}
 
+    public Object[] toTableRow() {
+        return new Object[]{"", nombre, especie, raza, edad, id_cliente};
+    }
+
+    public String getNombre() { return nombre; }
+    public int getIdCliente() { return id_cliente; }
+}

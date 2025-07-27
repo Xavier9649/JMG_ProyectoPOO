@@ -1,7 +1,8 @@
-// Producto.java
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
-public class Producto {
+class Producto {
     private int id_producto;
     private String nombre, categoria;
     private double precio;
@@ -15,11 +16,20 @@ public class Producto {
         this.cantidad = cantidad;
     }
 
-    public int getId() { return id_producto; }
-    public String getNombre() { return nombre; }
-    public String getCategoria() { return categoria; }
-    public double getPrecio() { return precio; }
-    public int getCantidad() { return cantidad; }
+    public boolean registrar() {
+        try (Connection conn = clever_cloud.conectar()) {
+            String sql = "INSERT INTO producto (nombre, categoria, precio, cantidad) VALUES (?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, nombre);
+            stmt.setString(2, categoria);
+            stmt.setDouble(3, precio);
+            stmt.setInt(4, cantidad);
+            stmt.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public static Producto buscarPorID(int id) {
         try (Connection conn = clever_cloud.conectar()) {
@@ -37,7 +47,7 @@ public class Producto {
                 );
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar producto: " + e.getMessage());
+            return null;
         }
         return null;
     }
@@ -58,52 +68,46 @@ public class Producto {
                 );
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar producto: " + e.getMessage());
+            return null;
         }
         return null;
     }
 
-    public static boolean eliminarReferenciasDetalleServicio(int id_producto) {
-        try (Connection conn = clever_cloud.conectar()) {
-            String sql = "DELETE FROM detalle_servicio WHERE id_producto = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, id_producto);
-            stmt.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Error al eliminar detalle_servicio: " + e.getMessage());
-            return false;
-        }
-    }
-
-    public static boolean eliminar(int id) {
+    public boolean eliminar() {
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "DELETE FROM producto WHERE id_producto = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, id);
-            int filas = stmt.executeUpdate();
-            return filas > 0;
-        } catch (SQLException e) {
-            System.out.println("Error al eliminar producto: " + e.getMessage());
+            stmt.setInt(1, id_producto);
+            return stmt.executeUpdate() > 0;
+        } catch (Exception e) {
             return false;
         }
     }
 
-    public static boolean actualizar(int id, String nombre, String categoria, double precio, int cantidad) {
+    public boolean actualizar(String nuevoNombre, String nuevaCategoria, double nuevoPrecio, int nuevaCantidad) {
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "UPDATE producto SET nombre = ?, categoria = ?, precio = ?, cantidad = ? WHERE id_producto = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, nombre);
-            stmt.setString(2, categoria);
-            stmt.setDouble(3, precio);
-            stmt.setInt(4, cantidad);
-            stmt.setInt(5, id);
+            stmt.setString(1, nuevoNombre);
+            stmt.setString(2, nuevaCategoria);
+            stmt.setDouble(3, nuevoPrecio);
+            stmt.setInt(4, nuevaCantidad);
+            stmt.setInt(5, id_producto);
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
-            System.out.println("Error al actualizar producto: " + e.getMessage());
             return false;
         }
     }
+
+    public Object[] toTableRow() {
+        return new Object[]{id_producto, nombre, categoria, precio, cantidad};
+    }
+
+    public int getId() { return id_producto; }
+    public String getNombre() { return nombre; }
+    public String getCategoria() { return categoria; }
+    public double getPrecio() { return precio; }
+    public int getCantidad() { return cantidad; }
 }
 
 

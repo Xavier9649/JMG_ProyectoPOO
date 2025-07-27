@@ -1,33 +1,39 @@
-// DetalleServicio.java
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
-public class DetalleServicio {
-    private int id_detalle;
+class DetalleServicio {
+    private int id;
     private Factura factura;
-    private Producto servicio;
+    private Producto producto;
     private int cantidad;
-    private double precio_unitario;
+    private double precioUnitario;
 
-    public DetalleServicio(Factura factura, Producto servicio, int cantidad, double precio_unitario) {
+    public DetalleServicio(Factura factura, Producto producto, int cantidad, double precioUnitario) {
         this.factura = factura;
-        this.servicio = servicio;
+        this.producto = producto;
         this.cantidad = cantidad;
-        this.precio_unitario = precio_unitario;
+        this.precioUnitario = precioUnitario;
+    }
+
+    public void setFactura(Factura factura) {
+        this.factura = factura;
     }
 
     public boolean registrar() {
-        String sql = "INSERT INTO detalle_servicio (id_factura, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
-        try (Connection conn = clever_cloud.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = clever_cloud.conectar()) {
+            String sql = "INSERT INTO detalle_servicio (id_factura, id_servicio, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, factura.getId());
-            stmt.setInt(2, servicio.getId());
+            stmt.setInt(2, producto.getId());
             stmt.setInt(3, cantidad);
-            stmt.setDouble(4, precio_unitario);
+            stmt.setDouble(4, precioUnitario);
             stmt.executeUpdate();
             return true;
-        } catch (SQLException e) {
-            System.out.println("Error al registrar detalle de servicio: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
 }
+
+

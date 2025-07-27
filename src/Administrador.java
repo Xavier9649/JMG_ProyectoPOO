@@ -1,6 +1,5 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.sql.*;
 
 public class Administrador extends JFrame {
     private JPanel administradorpanel;
@@ -44,109 +43,60 @@ public class Administrador extends JFrame {
     }
 
     private void registrarUsuario() {
-        String nombre = txtusuario.getText();
-        String pass = new String(txtpassword.getPassword());
-        String rol = comboBoxusuario.getSelectedItem().toString();
-        try (Connection conn = clever_cloud.conectar()) {
-            String sql = "INSERT INTO usuario (nombre, contraseña, rol) VALUES (?, ?, ?)";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, nombre);
-            stmt.setString(2, pass);
-            stmt.setString(3, rol);
-            stmt.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Usuario registrado.");
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Error al registrar usuario: " + ex.getMessage());
-        }
+        Usuario.registrarDesdeAdministrador(txtusuario, txtpassword, comboBoxusuario);
     }
 
     private void buscarProducto() {
         modeloProducto.setRowCount(0);
         Producto producto = Producto.buscarPorID(Integer.parseInt(txtidproducto.getText()));
-        if (producto != null) {
-            modeloProducto.addRow(new Object[]{producto.getId(), producto.getNombre(), producto.getCategoria(), producto.getPrecio(), producto.getCantidad()});
-        }
+        if (producto != null) modeloProducto.addRow(producto.toTableRow());
     }
 
     private void buscarCliente() {
         modeloCliente.setRowCount(0);
         Cliente cliente = Cliente.buscarPorID(Integer.parseInt(txtidcliente.getText()));
-        if (cliente != null) {
-            modeloCliente.addRow(new Object[]{cliente.getIdCliente(), cliente.getNombre(), cliente.getApellido(), cliente.getTelefono(), cliente.getCorreo(), cliente.getDireccion()});
-        }
+        if (cliente != null) modeloCliente.addRow(cliente.toTableRow());
     }
 
     private void buscarMascota() {
         modeloMascota.setRowCount(0);
         for (Mascota m : Mascota.buscarPorNombre(txtnombremascota.getText())) {
-            modeloMascota.addRow(new Object[]{"", m.getNombre(), "", "", "", m.getIdCliente()});
+            modeloMascota.addRow(m.toTableRow());
         }
     }
 
     private void registrarNuevoProducto() {
-        try {
-            double precio = Double.parseDouble(txtprecionew.getText());
-            int cantidad = Integer.parseInt(txtcantidadnew.getText());
-            try (Connection conn = clever_cloud.conectar()) {
-                String sql = "INSERT INTO producto (nombre, categoria, precio, cantidad) VALUES (?, ?, ?, ?)";
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.setString(1, textnewproducto.getText());
-                stmt.setString(2, textnewcategoria.getText());
-                stmt.setDouble(3, precio);
-                stmt.setInt(4, cantidad);
-                stmt.executeUpdate();
-                JOptionPane.showMessageDialog(this, "Producto registrado.");
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
-        }
+        Producto nuevo = new Producto(0, textnewproducto.getText(), textnewcategoria.getText(), Double.parseDouble(txtprecionew.getText()), Integer.parseInt(txtcantidadnew.getText()));
+        if (nuevo.registrar()) JOptionPane.showMessageDialog(this, "Producto registrado");
     }
 
     private void borrarProducto() {
         int fila = tableproducto.getSelectedRow();
-        if (fila < 0) {
-            JOptionPane.showMessageDialog(this, "Por favor, selecciona un producto para eliminar.");
-            return;
-        }
-
-        int confirm = JOptionPane.showConfirmDialog(this, "¿Estás seguro de que deseas eliminar este producto?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
-        if (confirm != JOptionPane.YES_OPTION) return;
-
+        if (fila < 0) return;
         int id = (int) tableproducto.getValueAt(fila, 0);
-        if (Producto.eliminar(id)) {
+        Producto producto = Producto.buscarPorID(id);
+        if (producto != null && producto.eliminar()) {
             modeloProducto.removeRow(fila);
-            JOptionPane.showMessageDialog(this, "Producto eliminado.");
-        } else {
-            JOptionPane.showMessageDialog(this, "No se pudo eliminar el producto.");
-        }
-    }
-
-    private void buscarProductoParaActualizar() {
-        Producto producto = Producto.buscarPorID(Integer.parseInt(idproductoparaactualizar.getText()));
-        if (producto != null) {
-            nuevonombreproducto.setText(producto.getNombre());
-            nuevacategoriaproducto.setText(producto.getCategoria());
-            nuevoprecioproducto.setText(String.valueOf(producto.getPrecio()));
-            nuevacantidadproducto.setText(String.valueOf(producto.getCantidad()));
+            JOptionPane.showMessageDialog(this, "Producto eliminado");
         }
     }
 
     private void actualizarProducto() {
-        try {
-            int id = Integer.parseInt(idproductoparaactualizar.getText());
-            String nombre = nuevonombreproducto.getText();
-            String categoria = nuevacategoriaproducto.getText();
-            double precio = Double.parseDouble(nuevoprecioproducto.getText());
-            int cantidad = Integer.parseInt(nuevacantidadproducto.getText());
-            if (Producto.actualizar(id, nombre, categoria, precio, cantidad)) {
-                JOptionPane.showMessageDialog(this, "Producto actualizado correctamente.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al actualizar: " + e.getMessage());
+        int id = Integer.parseInt(idproductoparaactualizar.getText());
+        Producto producto = Producto.buscarPorID(id);
+        if (producto != null) {
+            boolean actualizado = producto.actualizar(
+                    nuevonombreproducto.getText(),
+                    nuevacategoriaproducto.getText(),
+                    Double.parseDouble(nuevoprecioproducto.getText()),
+                    Integer.parseInt(nuevacantidadproducto.getText())
+            );
+            if (actualizado) JOptionPane.showMessageDialog(this, "Producto actualizado");
         }
     }
+
     public static void main(String[] args) {
-        new Administrador();
+        SwingUtilities.invokeLater(() -> new Administrador());
     }
 
 }

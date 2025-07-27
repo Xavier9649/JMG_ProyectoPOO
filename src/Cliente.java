@@ -1,5 +1,7 @@
-// Cliente.java
+import javax.swing.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cliente {
     private int id_cliente;
@@ -31,7 +33,6 @@ public class Cliente {
             stmt.executeUpdate();
             return true;
         } catch (Exception e) {
-            System.out.println("Error al registrar cliente: " + e.getMessage());
             return false;
         }
     }
@@ -53,9 +54,35 @@ public class Cliente {
                 );
             }
         } catch (Exception e) {
-            System.out.println("Error al buscar cliente: " + e.getMessage());
+            return null;
         }
         return null;
+    }
+
+    public static List<Cliente> buscarTodos() {
+        List<Cliente> lista = new ArrayList<>();
+        try (Connection conn = clever_cloud.conectar()) {
+            String sql = "SELECT * FROM cliente";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                lista.add(new Cliente(
+                        rs.getInt("id_cliente"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("telefono"),
+                        rs.getString("correo"),
+                        rs.getString("direccion")
+                ));
+            }
+        } catch (Exception e) {
+            return lista;
+        }
+        return lista;
+    }
+
+    public Object[] toTableRow() {
+        return new Object[]{id_cliente, nombre, apellido, telefono, correo, direccion};
     }
 
     public int getIdCliente() { return id_cliente; }
