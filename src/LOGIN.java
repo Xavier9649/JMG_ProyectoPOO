@@ -3,7 +3,7 @@ import javax.swing.*;
 import java.sql.Connection;
 
 
-
+// componentes del formulario
 public class LOGIN extends JFrame {
     private JTextField txtusuario;
     private JPasswordField txtpassword;
@@ -11,7 +11,7 @@ public class LOGIN extends JFrame {
     private JButton INGRESARButton;
     private JPanel panelLogin;
     private JButton verificarConexiónButton;
-
+// metdodo constructor
     public LOGIN() {
         setTitle("Inicio de Sesión");
         setContentPane(panelLogin);
@@ -51,7 +51,7 @@ public class LOGIN extends JFrame {
             JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
         }
     }
-
+// metodo main
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LOGIN());
     }
