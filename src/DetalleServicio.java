@@ -1,37 +1,33 @@
+// DetalleServicio.java
+import java.sql.*;
+
 public class DetalleServicio {
     private int id_detalle;
-    private int id_factura;
-    private int id_servicio;
+    private Factura factura;
+    private Producto servicio;
     private int cantidad;
-    private double preciounitario;
+    private double precio_unitario;
 
-
-    //Constructor
-    public DetalleServicio(int id_detalle,int id_factura, int id_servicio, int cantidad, double preciounitario) {
-        this.id_detalle= id_detalle;
-        this.id_factura = id_factura;
-        this.id_servicio = id_servicio;
+    public DetalleServicio(Factura factura, Producto servicio, int cantidad, double precio_unitario) {
+        this.factura = factura;
+        this.servicio = servicio;
         this.cantidad = cantidad;
-        this.preciounitario = preciounitario;
+        this.precio_unitario = precio_unitario;
     }
 
-    //Metodos
-    //Calcular Subtotal
-    public double calcularSubtotal() {
-        System.out.println("ID del producto: " + id_servicio +
-                ", Cantidad: " + cantidad +
-                ", Precio por producto: $" + preciounitario);
-        return cantidad * preciounitario;
+    public boolean registrar() {
+        String sql = "INSERT INTO detalle_servicio (id_factura, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
+        try (Connection conn = clever_cloud.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, factura.getId());
+            stmt.setInt(2, servicio.getId());
+            stmt.setInt(3, cantidad);
+            stmt.setDouble(4, precio_unitario);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al registrar detalle de servicio: " + e.getMessage());
+            return false;
+        }
     }
-    //Getters
-    public int getid_factura() {
-        return id_factura;
-    }
-    public int getid_servicio() {
-        return id_servicio;
-    }
-    public int getcantidad() {
-        return cantidad;
-    }
-
 }

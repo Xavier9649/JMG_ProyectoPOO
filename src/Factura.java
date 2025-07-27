@@ -1,37 +1,42 @@
+// Factura.java
+import java.sql.*;
 import java.util.Date;
 
 public class Factura {
-    private int id_factura;
+    private int id; // Se requiere para enlazar con detalle_servicio
     private Date fecha;
-    private Cliente cliente; //Debido a que Cliente es una clase, se puede usar como tipo de dato
-    private String tipoVenta; // Producto o servicio, o ambos
+    private String tipoVenta;
     private double total;
+    private int idCliente;
 
-    // Constructor
-    public Factura(int id_factura, Date fecha, Cliente cliente, String tipoVenta, double total) {
-        this.id_factura = id_factura;
+    public Factura(Date fecha, String tipoVenta, double total, int idCliente) {
         this.fecha = fecha;
-        this.cliente = cliente;
         this.tipoVenta = tipoVenta;
         this.total = total;
+        this.idCliente = idCliente;
     }
 
-    //Metodos
-    //Generar Factura void
-    public void generarFactura() {
-        System.out.println("Factura ID: " + id_factura);
-        System.out.println("Fecha: " + fecha);
-        System.out.println("Cliente: " + cliente.getNombre() + " " + cliente.getApellido()); // Usamos los getters de Cliente para obtener el nombre y apellido
-        System.out.println("Tipo de Venta: " + tipoVenta);
-        System.out.println("Total: $" + total);
-    }
-    //Getters
-    public int getIdFactura() {
-        return id_factura;
-    }
-    public String getTipoVenta() {  return tipoVenta;  }
-    public double getTotal() {  return total;  }
-    public Cliente getCliente() {  return cliente;  }
-    public Date getFecha() {  return fecha;  }
+    public int getId() { return id; } // Agregado para enlazar detalles
 
+    public boolean registrar() {
+        try (Connection conn = clever_cloud.conectar()) {
+            String sql = "INSERT INTO factura (fecha, tipo_venta, total, id_cliente) VALUES (?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setDate(1, new java.sql.Date(fecha.getTime()));
+            stmt.setString(2, tipoVenta);
+            stmt.setDouble(3, total);
+            stmt.setInt(4, idCliente);
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                this.id = rs.getInt(1);
+            }
+
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error al registrar factura: " + e.getMessage());
+            return false;
+        }
+    }
 }
