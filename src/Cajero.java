@@ -3,7 +3,9 @@ import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
+//Definimos la clase Cajero que extiende JFrame para crear una interfaz gráfica de usuario
 public class Cajero extends JFrame {
+    // Componentes de la interfaz gráfica
     private JTabbedPane tabbedPane1;
     private JPanel panel1;
 
@@ -30,7 +32,8 @@ public class Cajero extends JFrame {
     private DefaultTableModel modeloClienteFactura;
     private DefaultTableModel modeloDetalleFactura;
 
-
+    //Constructor de la clase Cajero
+    // Aquí se inicializan los componentes de la interfaz gráfica y se configuran sus propiedades
     public Cajero() {
         setContentPane(tabbedPane1);
         setTitle("Panel Cajero");
@@ -38,11 +41,19 @@ public class Cajero extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
+        //Inicializamos las tablas y los listeners aqui
+        // para que se configuren al iniciar la aplicación
         inicializarTablas();
         inicializarListeners();
     }
 
+
+    //Para optimizar la legibilidad y mantenimiento del código
+    //hemos separado las inicializaciones de tablas y listeners en métodos distintos.
     private void inicializarTablas() {
+        // Inicializamos los modelos de las tablas para cada sección
+        // para que se muestren los datos correctamente
+        //Básicamente se crea un modelo de tabla para cada sección mediante objetos DefaultTableModel
         modeloProductoServicio = new DefaultTableModel(new Object[]{"ID", "Nombre", "Categoría", "Precio", "Cantidad"}, 0);
         productoservicioregistro.setModel(modeloProductoServicio);
 
@@ -56,6 +67,7 @@ public class Cajero extends JFrame {
         productservicioingresadofactura.setModel(modeloDetalleFactura);
     }
 
+    // Este método inicializa los listeners de los botones para manejar eventos de clic
     private void inicializarListeners() {
         registrarButton.addActionListener(e -> registrarCliente());
         botonbuscarcliente.addActionListener(e -> buscarCliente());
@@ -68,6 +80,8 @@ public class Cajero extends JFrame {
         buscarProductoServicioButton.addActionListener(e -> buscarProductoServicio());
     }
 
+    //Pestaña Cliente
+    //Obtenemos los datos de los campos de texto y creamos un objeto Cliente
     private void registrarCliente() {
         Cliente cliente = new Cliente(
                 Integer.parseInt(textnuevoidcliente.getText()),
@@ -77,32 +91,48 @@ public class Cajero extends JFrame {
                 textnuevocorreo.getText(),
                 textnuevadireccion.getText()
         );
+        //Si el registro es exitoso, mostramos un mensaje de éxito
         if (cliente.registrar()) JOptionPane.showMessageDialog(this, "Cliente registrado");
     }
 
     private void buscarCliente() {
+        //Aqui llamamos al método buscarPorID de la clase Cliente
         Cliente cliente = Cliente.buscarPorID(Integer.parseInt(textidcliente.getText()));
+        //Se mostrará un mensaje de diálogo con el nombre del cliente encontrado o un mensaje de error si no se encuentra
+        //Si cliente es != null, mostramos su nombre, de lo contrario, mostramos un mensaje de error
         JOptionPane.showMessageDialog(this, cliente != null ? "Cliente encontrado: " + cliente.getNombre() : "Cliente no encontrado");
+
     }
 
     private void buscarProductoServicio() {
         try {
             int id = Integer.parseInt(textidproductoservicio.getText());
+            //Llamamos al método buscarPorID de la clase Producto para buscar el producto por su ID
             Producto producto = Producto.buscarPorID(id);
-            modeloProductoServicio.setRowCount(0); // limpia la tabla
+            modeloProductoServicio.setRowCount(0); // limpia la tabla antes de agregar el nuevo producto
+            //Si el producto es encontrado, se agrega una fila a la tabla de productos con sus datos
+            //Si el producto es null, mostramos un mensaje de error
             if (producto != null) {
+                //Agregamos una fila a la tabla con los datos del producto encontrado
                 modeloProductoServicio.addRow(producto.toTableRow());
             } else {
+                //Si el producto no es encontrado, mostramos un mensaje de error
                 JOptionPane.showMessageDialog(this, "Producto no encontrado.");
             }
+            //NumberFormatException es una excepción que se lanza cuando se intenta convertir
+            // una cadena a un número y la cadena no es un número válido
         } catch (NumberFormatException e) {
+            //Si ocurre una excepción, mostramos un mensaje de error
             JOptionPane.showMessageDialog(this, "Ingrese un ID válido.");
         }
     }
 
     private void buscarMascota() {
+        //Lista<Mascota> es una lista de objetos Mascota que se obtiene al llamar al método buscarPorNombre
         List<Mascota> lista = Mascota.buscarPorNombre(textnombremascota.getText());
+        //Creamos un onjeto StringBuilder para construir el resultado
         StringBuilder resultado = new StringBuilder();
+        //Iteramos sobre la lista de mascotas y agregamos sus nombres y el ID del cliente al resultado
         for (Mascota m : lista) {
             resultado.append("Mascota: ").append(m.getNombre()).append(" - Cliente: ").append(m.getIdCliente()).append(" ");
         }
@@ -110,6 +140,7 @@ public class Cajero extends JFrame {
     }
 
     private void registrarMascota() {
+        //Obtenemos los datos de los campos de texto y creamos un objeto Mascota
         Mascota mascota = new Mascota(
                 textnuevonombremascota.getText(),
                 textnuevaespecie.getText(),
@@ -117,25 +148,32 @@ public class Cajero extends JFrame {
                 Integer.parseInt(textnuevaedad.getText()),
                 Integer.parseInt(textidclienteregistrado.getText())
         );
+        //Llamamos al método registrar de la clase Mascota para registrar la mascota
         if (mascota.registrar()) JOptionPane.showMessageDialog(this, "Mascota registrada");
     }
 
     private void buscarClienteFactura() {
+        //Creamos un objeto Cliente al llamar al método buscarPorID de la clase Cliente
+        //Obtenemos el ID del cliente desde el campo de texto textidclientefact
         Cliente cliente = Cliente.buscarPorID(Integer.parseInt(textidclientefactura.getText()));
         modeloClienteFactura.setRowCount(0);
+        //Si el cliente es encontrado, se agrega una fila a la tabla de clientes con sus datos
         if (cliente != null) modeloClienteFactura.addRow(cliente.toTableRow());
     }
 
     private void agregarProductoAFactura() {
+        // Verificamos que se haya ingresado un producto o servicio en el campo de texto
         String nombre = textproductoserviciofactura.getText().trim();
         if (nombre.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, ingresa el nombre del producto o servicio.");
             return;
         }
-
+        //Declaramos una variable cantidad para obtener el valor del spinner cantidadfactura
         int cantidad = (int) cantidadfactura.getValue();
+        //Buscamos el producto por su nombre utilizando el método buscarPorNombre de la clase Producto
         Producto p = Producto.buscarPorNombre(nombre);
         if (p != null) {
+            //Si el producto es encontrado, agregamos una fila a la tabla de detalle de factura
             double subtotal = p.getPrecio() * cantidad;
             modeloDetalleFactura.addRow(new Object[]{p.getNombre(), p.getPrecio(), cantidad, subtotal});
         } else {
@@ -144,16 +182,23 @@ public class Cajero extends JFrame {
     }
 
     private void generarFactura() {
+        //Primero verificamos que se haya ingresado un cliente y al menos un producto
         if (modeloClienteFactura.getRowCount() == 0 || modeloDetalleFactura.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Debe ingresar cliente y al menos un producto");
             return;
         }
 
+        //Obtenemos el ID del cliente desde la primera fila de la tabla modeloClienteFactura
+        // y calculamos el total de la factura
         int idCliente = (int) modeloClienteFactura.getValueAt(0, 0);
         double total = 0;
+        //Creamos una lista de detalles de servicio para almacenar los productos y sus cantidades
         List<DetalleServicio> detalles = new ArrayList<>();
+        //Con StringBuilder construimos un resumen de la factura
         StringBuilder resumen = new StringBuilder();
 
+        //Agregamos los datos del cliente y la fecha al resumen
+        //Con append agregamos texto al StringBuilder
         resumen.append("Resumen de la factura:\n");
         resumen.append("Cliente ID: ").append(idCliente).append("\n");
         resumen.append("Cliente: ").append(modeloClienteFactura.getValueAt(0, 1)).append(" ")
@@ -161,12 +206,17 @@ public class Cajero extends JFrame {
         resumen.append("Fecha: ").append(textfecha.getText()).append("\n\n");
         resumen.append("Productos:\n");
 
+
         for (int i = 0; i < modeloDetalleFactura.getRowCount(); i++) {
             String nombreProd = (String) modeloDetalleFactura.getValueAt(i, 0);
             int cantidad = (int) modeloDetalleFactura.getValueAt(i, 2);
             double precio = (double) modeloDetalleFactura.getValueAt(i, 1);
             double subtotal = cantidad * precio;
+
+            //Buscamos el producto por su nombre
             Producto p = Producto.buscarPorNombre(nombreProd);
+
+            //Si el producto es encontrado, lo agregamos a la lista de detalles y al resumen
             if (p != null) {
                 detalles.add(new DetalleServicio(null, p, cantidad, precio));
                 total += subtotal;
@@ -177,8 +227,12 @@ public class Cajero extends JFrame {
             }
         }
 
+        //Agregamos el total al resumen
+        // usamos String.format para formatear el total a dos decimales
         resumen.append("\nTotal: $").append(String.format("%.2f", total));
 
+        //Creamos un objeto Factura con la fecha, tipo, total y ID del cliente
+        // y llamamos al método registrarConDetalles para registrar la factura con sus detalles
         Factura factura = new Factura(java.sql.Date.valueOf(textfecha.getText()), "Venta", total, idCliente);
         if (factura.registrarConDetalles(detalles)) {
             JOptionPane.showMessageDialog(this, "Factura registrada correctamente.\n\n" + resumen.toString());

@@ -1,0 +1,60 @@
+@startuml
+
+class Cliente {
+  - id_cliente: int
+  - nombre: String
+  - apellido: String
+  - telefono: String
+  - correo: String
+  - direccion: String
+}
+
+class Mascota {
+  - nombre: String
+  - especie: String
+  - raza: String
+  - edad: int
+  - id_cliente: int
+}
+
+class Producto {
+  - id_producto: int
+  - nombre: String
+  - categoria: String
+  - precio: double
+  - cantidad: int
+}
+
+class Factura {
+  - id: int
+  - fecha: Date
+  - tipoVenta: String
+  - total: double
+  - id_cliente: int
+}
+
+class DetalleServicio {
+  - id: int
+  - cantidad: int
+  - precioUnitario: double
+  - id_factura: int
+  - producto: Producto
+}
+
+class Usuario {
+  - nombre: String
+  - contraseña: String
+  - rol: String
+}
+
+Cliente "1" --> "*" Mascota
+Cliente "1" --> "*" Factura
+Factura "1" --> "*" DetalleServicio
+DetalleServicio "*" --> "1" Producto
+
+@enduml
+
+
+
+
+
