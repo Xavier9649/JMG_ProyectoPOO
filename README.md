@@ -1,3 +1,17 @@
+INTEGRANTES:
+Jorge Javier Chuncho Vera.
+Miguel Angel Puertas Vélez.
+
+CLAVES DE ACCESO AL SISTEMA:
+
+ROL ADMINISTRADOR
+USUARIO: Miguel
+CONTRASEÑA: Admin1234
+
+ROL CAJERO
+USUARIO:  Jorge
+CONTRASEÑA: Caj1234
+
 Aplicación de escritorio desarrollada en Java utilizando Java Swing, como parte del curso de Programación Orientada a Objetos. 
 El sistema permite gestionar operaciones clave en una veterinaria mediante acceso por roles (administrador y cajero), integrando conceptos fundamentales de la POO como encapsulamiento,
 herencia y polimorfismo
@@ -22,3 +36,5 @@ Inicio de sesión
 - Java Swing para la interfaz gráfica
 - Principios de Programación Orientada a Objetos
 - Enfoque MVC (Modelo–Vista–Controlador)
+
+
