@@ -195,6 +195,9 @@ public class Cajero extends JFrame {
         //Creamos una lista de detalles de servicio para almacenar los productos y sus cantidades
         List<DetalleServicio> detalles = new ArrayList<>();
         //Con StringBuilder construimos un resumen de la factura
+        //StringBuilder es una clase que permite construir cadenas de texto de manera eficiente
+        //Es más eficiente que concatenar cadenas con el operador +
+        //porque evita crear múltiples objetos String intermedios
         StringBuilder resumen = new StringBuilder();
 
         //Agregamos los datos del cliente y la fecha al resumen
@@ -243,7 +246,7 @@ public class Cajero extends JFrame {
     }
 
 
-
+    // Método para limpiar los campos de la factura
     private void limpiarCamposFactura() {
         textfecha.setText("");
         textidclientefactura.setText("");

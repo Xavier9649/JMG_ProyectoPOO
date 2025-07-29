@@ -19,8 +19,13 @@ class Factura {
         this.idCliente = idCliente;
     }
 
+    //Este metodo nos permite obtener el id de la factura
+    // es utilizado para registrar los detalles de la factura
     public int getId() { return id; }
 
+    // Este metodo nos permite registrar una nueva factura en la base de datos
+    // recibe los datos de la factura y los inserta en la tabla factura
+    // retorna true si se registró correctamente, false si hubo un error
     public boolean registrar() {
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "INSERT INTO factura (fecha, tipo_venta, total, id_cliente) VALUES (?, ?, ?, ?)";
@@ -42,6 +47,10 @@ class Factura {
         }
     }
 
+    // Este metodo nos permite registrar una factura con detalles
+    // recibe una lista de detalles de servicio y los registra junto con la factura
+    // list<DetalleServicio> detalles es una lista de objetos DetalleServicio que contienen
+    // los detalles de los productos o servicios asociados a la factura
     public boolean registrarConDetalles(List<DetalleServicio> detalles) {
         if (!this.registrar()) return false;
         for (DetalleServicio d : detalles) {

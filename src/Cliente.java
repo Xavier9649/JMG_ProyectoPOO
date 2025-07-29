@@ -20,8 +20,14 @@ public class Cliente {
         this.direccion = direccion;
     }
 
+    // Este metodo nos permite registrar un nuevo cliente en la base de datos
+    // recibe los datos del cliente y los inserta en la tabla cliente
+    // retorna true si se registro correctamente, false si hubo un error
     public boolean registrar() {
+        // Verificamos que los campos no esten vacios
         try (Connection conn = clever_cloud.conectar()) {
+            //Creación de la sentencia SQL para insertar un nuevo cliente
+            // usamos un PreparedStatement para evitar inyecciones SQL
             String sql = "INSERT INTO cliente (id_cliente, nombre, apellido, telefono, correo, direccion) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, id_cliente);
@@ -33,10 +39,14 @@ public class Cliente {
             stmt.executeUpdate();
             return true;
         } catch (Exception e) {
+            // Si ocurre un error, mostramos un mensaje de error
             return false;
         }
     }
 
+    // Este metodo nos permite actualizar un cliente en la base de datos
+    // recibe los nuevos datos del cliente y los actualiza en la tabla cliente
+    // retorna true si se actualizo correctamente, false si hubo un error
     public static Cliente buscarPorID(int id) {
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "SELECT * FROM cliente WHERE id_cliente = ?";
@@ -59,6 +69,9 @@ public class Cliente {
         return null;
     }
 
+    // Este metodo nos permite eliminar un cliente de la base de datos
+    // recibe el id del cliente y lo elimina de la tabla cliente
+    // retorna true si se elimino correctamente, false si hubo un error
     public static List<Cliente> buscarTodos() {
         List<Cliente> lista = new ArrayList<>();
         try (Connection conn = clever_cloud.conectar()) {
@@ -81,6 +94,10 @@ public class Cliente {
         return lista;
     }
 
+    //toTableRow es un metodo que devuelve un array de objetos que representa una fila de la tabla
+    //esto nos sirve para mostrar los datos en una tabla de la interfaz gráfica
+    //cada objeto del array representa una columna de la tabla
+    //Object[] es un array de objetos que representa una fila de la tabla
     public Object[] toTableRow() {
         return new Object[]{id_cliente, nombre, apellido, telefono, correo, direccion};
     }

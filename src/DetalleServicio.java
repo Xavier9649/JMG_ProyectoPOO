@@ -19,6 +19,7 @@ class DetalleServicio {
         this.factura = factura;
     }
 
+    // Este metodo nos permite registrar los detalles de un servicio/producto en la base de datos
     public boolean registrar() {
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "INSERT INTO detalle_servicio (id_factura, id_servicio, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
@@ -30,6 +31,8 @@ class DetalleServicio {
             stmt.executeUpdate();
             return true;
         } catch (Exception e) {
+            // Si ocurre un error, mostramos un mensaje de error
+            // y retornamos false
             e.printStackTrace();
             return false;
         }

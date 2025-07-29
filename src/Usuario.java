@@ -4,6 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 class Usuario {
+    //Con este metodo podemos validar las credenciales de un usuario
+    // recibe el nombre, contraseña y rol del usuario y retorna true si las credenciales son válidas,
+    // o false si no lo son
     public static boolean validarCredenciales(String nombre, String contraseña, String rol) {
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "SELECT * FROM usuario WHERE nombre = ? AND contraseña = ? AND rol = ?";
@@ -18,6 +21,9 @@ class Usuario {
         }
     }
 
+    // Este método permite registrar un nuevo usuario en la base de datos
+    // recibe el nombre, contraseña y rol del usuario y retorna true si se registró correctamente
+    // o false si hubo un error
     public static boolean registrarNuevo(String nombre, String contraseña, String rol) {
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "INSERT INTO usuario (nombre, contraseña, rol) VALUES (?, ?, ?)";
@@ -33,6 +39,8 @@ class Usuario {
         }
     }
 
+    // Este método permite buscar un usuario por su nombre
+    // recibe el nombre del usuario y retorna un objeto Usuario con los datos encontrados
     public static void registrarDesdeFormulario(JTextField txtusuario, JPasswordField txtpassword, JComboBox<String> comboBoxusuario) {
         String nombre = txtusuario.getText();
         String clave = new String(txtpassword.getPassword());

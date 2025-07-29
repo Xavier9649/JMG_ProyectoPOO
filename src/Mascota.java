@@ -16,6 +16,9 @@ class Mascota {
         this.id_cliente = id_cliente;
     }
 
+    // Este método nos permite registrar una nueva mascota en la base de datos
+    // recibe los datos de la mascota y los inserta en la tabla mascota
+    // retorna true si se registró correctamente, false si hubo un error
     public boolean registrar() {
         try (Connection conn = clever_cloud.conectar()) {
             String sql = "INSERT INTO mascota (nombre, especie, raza, edad, id_cliente) VALUES (?, ?, ?, ?, ?)";
@@ -32,6 +35,10 @@ class Mascota {
         }
     }
 
+    // Este método nos permite buscar una mascota por su ID
+    // recibe el ID de la mascota y retorna un objeto Mascota con los datos encontrados
+    // con List<Mascota> buscarPorNombre(String nombreBuscado) encontramos todas las mascotas con el nombre buscado
+    // si no se encuentra ninguna mascota, retorna una lista vacía
     public static List<Mascota> buscarPorNombre(String nombreBuscado) {
         List<Mascota> lista = new ArrayList<>();
         try (Connection conn = clever_cloud.conectar()) {
@@ -54,10 +61,14 @@ class Mascota {
         return lista;
     }
 
+    // Este método nos permite buscar todas las mascotas en la base de datos
+    // retorna una lista de objetos Mascota con todos los datos encontrados
+    // si no se encuentra ninguna mascota, retorna una lista vacía
     public Object[] toTableRow() {
         return new Object[]{"", nombre, especie, raza, edad, id_cliente};
     }
 
+    // Getters para acceder a los atributos de la mascota
     public String getNombre() { return nombre; }
     public int getIdCliente() { return id_cliente; }
 }
