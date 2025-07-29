@@ -12,6 +12,10 @@ ROL CAJERO
 USUARIO:  Jorge
 CONTRASEÑA: Caj1234
 
+ENLACE DEL VIDEO:
+https://drive.google.com/file/d/1cLywz_AkG-X0e3lZpOzgFSocZA2GzDdf/view?usp=sharing
+
+
 Aplicación de escritorio desarrollada en Java utilizando Java Swing, como parte del curso de Programación Orientada a Objetos. 
 El sistema permite gestionar operaciones clave en una veterinaria mediante acceso por roles (administrador y cajero), integrando conceptos fundamentales de la POO como encapsulamiento,
 herencia y polimorfismo
