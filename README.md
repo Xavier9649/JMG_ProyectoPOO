@@ -13,7 +13,7 @@ USUARIO:  Jorge
 CONTRASEÑA: Caj1234
 
 ENLACE DEL VIDEO:
-https://drive.google.com/file/d/1cLywz_AkG-X0e3lZpOzgFSocZA2GzDdf/view?usp=sharing
+https://youtu.be/DWknqZfb6PU
 
 
 Aplicación de escritorio desarrollada en Java utilizando Java Swing, como parte del curso de Programación Orientada a Objetos. 
@@ -40,5 +40,7 @@ Inicio de sesión
 - Java Swing para la interfaz gráfica
 - Principios de Programación Orientada a Objetos
 - Enfoque MVC (Modelo–Vista–Controlador)
+
+IMPORTANTE: Solo se pueden eliminar productos que no estan vinculados a una factura.
 
 
